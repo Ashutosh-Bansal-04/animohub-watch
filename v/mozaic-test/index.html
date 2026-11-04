@@ -32,16 +32,15 @@
   video { width:100%; height:100%; display:block; background:#000; }
   .meta { display:flex; gap:10px; align-items:center; color:var(--muted); font-size:14px; margin-top:14px; }
   .dot { width:4px; height:4px; border-radius:50%; background:var(--line); }
-  .cta { margin-top:32px; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:20px;
-         background:var(--card); border:1px solid var(--line); border-radius:18px; padding:24px 26px;
-         box-shadow:inset 0 3px 0 var(--blue); }
-  .cta h2 { font-size:22px; font-weight:800; }
-  .cta p { color:var(--muted); margin-top:6px; line-height:1.5; font-size:15px; max-width:520px; }
-  .btn { display:inline-block; background:var(--accent); color:var(--bg); font-weight:800; text-decoration:none;
-         padding:15px 24px; border-radius:12px; font-size:16px; white-space:nowrap; }
-  .btn:hover { filter:brightness(1.06); }
+  .book { margin-top:32px; background:var(--card); border:1px solid var(--line); border-radius:18px;
+          padding:24px 26px 18px; box-shadow:inset 0 3px 0 var(--blue); }
+  .book h2 { font-size:22px; font-weight:800; }
+  .book > p { color:var(--muted); margin-top:6px; line-height:1.5; font-size:15px; max-width:620px; }
+  .cal { margin-top:18px; width:100%; min-height:620px; overflow:auto; border-radius:12px; }
+  .fallback { font-size:13px !important; margin-top:10px !important; }
+  .fallback a { color:var(--accent); }
   footer { margin-top:40px; color:var(--muted); font-size:13px; text-align:center; }
-  @media (max-width:560px) { header { margin-bottom:24px; } .logo img { height:30px; } .pill { font-size:10px; padding:6px 10px; } .cta { padding:20px; } .btn { width:100%; text-align:center; } }
+  @media (max-width:560px) { header { margin-bottom:24px; } .logo img { height:30px; } .pill { font-size:10px; padding:6px 10px; } .book { padding:18px 12px 14px; } }
 </style>
 </head>
 <body>
@@ -58,13 +57,18 @@
     </video>
   </div>
   <div class="meta"><span>0:49</span><span class="dot"></span><span>Recorded for Mozaic Core</span></div>
-  <div class="cta">
-    <div>
-      <h2>Want the full campaign?</h2>
-      <p>30 minutes on Google Meet. No slides. You leave with the campaign and 25 real accounts showing these signals this week.</p>
-    </div>
-    <a class="btn" href="https://cal.com/animo-hub-xcswxx/quick-strategy-call" target="_blank" rel="noopener">Book a 30-minute call</a>
-  </div>
+  <section class="book">
+    <h2>Want the full campaign? Pick a time.</h2>
+    <p>30 minutes on Google Meet. No slides. You leave with the campaign and 25 real accounts showing these signals this week.</p>
+    <div id="cal-inline" class="cal"></div>
+    <p class="fallback">Calendar not loading? <a href="https://cal.com/animo-hub-xcswxx/quick-strategy-call" target="_blank" rel="noopener">Open it in a new tab</a>.</p>
+  </section>
+  <script>
+  (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if (typeof namespace === "string") { cal.ns[namespace] = cal.ns[namespace] || api; p(cal.ns[namespace], ar); p(cal, ["initNamespace", namespace]); } else p(cal, ar); return; } p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
+  Cal("init", "strategy", { origin: "https://cal.com" });
+  Cal.ns.strategy("inline", { elementOrSelector: "#cal-inline", calLink: "animo-hub-xcswxx/quick-strategy-call", config: { layout: "month_view", theme: "dark", name: "Istvan", notes: "Watched the video for Mozaic Core" } });
+  Cal.ns.strategy("ui", { theme: "dark", hideEventTypeDetails: false, layout: "month_view", cssVarsPerTheme: { dark: { "cal-brand": "#f5b544" } } });
+  </script>
   <footer>Animohub Studio · outbound systems that book meetings</footer>
 </div>
 </body>
