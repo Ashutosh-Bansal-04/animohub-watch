@@ -1,0 +1,27 @@
+name: Add view tracker to new video pages
+
+on:
+  push:
+    branches: [main]
+    paths: ["v/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  inject:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inject tracker
+        run: python3 tools/inject_tracker.py
+      - name: Commit if pages changed
+        run: |
+          if [ -n "$(git status --porcelain v)" ]; then
+            git config user.name "Animohub Bot"
+            git config user.email "bot@animohub.studio"
+            git add v
+            git commit -m "Add view tracker to new video pages"
+            git push
+          fi
