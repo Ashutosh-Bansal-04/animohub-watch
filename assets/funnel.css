@@ -1,0 +1,81 @@
+/* Animohub watch page booking funnel. Loaded only by pages that opt in. */
+.player { position:relative; }
+
+/* Mid-video interrupt */
+.ah-modal { position:fixed; inset:0; z-index:50; display:none; align-items:center; justify-content:center;
+  background:rgba(6,9,18,.78); backdrop-filter:blur(4px); padding:18px; }
+.ah-modal.on { display:flex; animation:ahFade .25s ease; }
+.ah-box { position:relative; width:100%; max-width:560px; background:var(--card); border:1px solid var(--line);
+  border-radius:18px; padding:26px 26px 20px; box-shadow:0 30px 80px rgba(0,0,0,.55), inset 0 3px 0 var(--accent); }
+.ah-kicker { font-size:12px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); }
+.ah-box h2 { font-size:clamp(22px, 3.6vw, 28px); line-height:1.15; font-weight:800; margin-top:8px; letter-spacing:-.01em; }
+.ah-box p.ah-lede { color:var(--muted); font-size:15px; line-height:1.55; margin-top:10px; }
+.ah-x { position:absolute; top:12px; right:14px; background:none; border:0; color:var(--muted); font-size:22px; cursor:pointer; line-height:1; }
+
+/* Blurred preview of the account list */
+.ah-list { margin-top:16px; border:1px solid var(--line); border-radius:12px; overflow:hidden; font-size:13px; }
+.ah-row { display:grid; grid-template-columns:1.1fr 1fr 1.2fr; gap:10px; padding:10px 12px; border-top:1px solid var(--line); align-items:center; }
+.ah-row:first-child { border-top:0; }
+.ah-head { background:rgba(255,255,255,.03); color:var(--muted); font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+.ah-co { font-weight:700; }
+.ah-sig { color:var(--muted); }
+.ah-lock { filter:blur(5px); user-select:none; color:var(--muted); }
+.ah-more { padding:9px 12px; border-top:1px solid var(--line); color:var(--accent); font-size:12px; font-weight:700; text-align:center; }
+
+.ah-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:18px; }
+.ah-btn { appearance:none; border:0; cursor:pointer; font:inherit; font-weight:800; font-size:15px; border-radius:12px;
+  padding:13px 18px; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; gap:8px; }
+.ah-primary { background:var(--accent); color:#1a1300; flex:1 1 220px; }
+.ah-primary:hover { filter:brightness(1.06); }
+.ah-ghost { background:transparent; color:var(--text); border:1px solid var(--line); flex:0 1 auto; }
+.ah-small { display:block; margin-top:12px; font-size:13px; color:var(--muted); text-align:center; }
+.ah-small a { color:var(--accent); }
+
+/* End-of-video panel, drawn over the player */
+.ah-end { position:absolute; inset:0; z-index:5; display:none; flex-direction:column; justify-content:center;
+  padding:clamp(16px, 4vw, 40px); background:linear-gradient(160deg, #0f1424, #151c33); }
+.ah-end.on { display:flex; animation:ahFade .3s ease; }
+.ah-end h2 { font-size:clamp(20px, 3.4vw, 30px); font-weight:800; line-height:1.15; max-width:640px; }
+.ah-steps { display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:16px; max-width:720px; }
+.ah-step { border:1px solid var(--line); border-radius:12px; padding:12px; font-size:13px; line-height:1.45; color:var(--muted); }
+.ah-step b { display:block; color:var(--text); font-size:14px; margin-bottom:3px; }
+.ah-step i { font-style:normal; color:var(--accent); font-weight:800; margin-right:4px; }
+.ah-end .ah-actions { max-width:520px; }
+
+/* Preview + proof blocks on the page */
+.ah-section { margin-top:32px; background:var(--card); border:1px solid var(--line); border-radius:18px; padding:24px 26px; }
+.ah-section h2 { font-size:22px; font-weight:800; }
+.ah-section > p { color:var(--muted); margin-top:6px; line-height:1.5; font-size:15px; max-width:640px; }
+.ah-proof { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:16px; }
+.ah-card { border:1px solid var(--line); border-radius:14px; padding:16px; }
+.ah-card .num { font-size:30px; font-weight:800; color:var(--accent); line-height:1; }
+.ah-card b { display:block; margin-top:8px; font-size:15px; }
+.ah-card span { display:block; color:var(--muted); font-size:13px; line-height:1.5; margin-top:4px; }
+.ah-vid { display:flex; gap:14px; align-items:center; text-decoration:none; color:var(--text); }
+.ah-vid img { width:120px; aspect-ratio:16/9; object-fit:cover; border-radius:8px; border:1px solid var(--line); flex:none; }
+
+/* Sticky booking bar */
+.ah-bar { position:fixed; left:50%; bottom:16px; z-index:40; transform:translate(-50%, 140%); transition:transform .35s ease;
+  width:calc(100% - 24px); max-width:640px; display:flex; gap:12px; align-items:center; justify-content:space-between;
+  background:#1b2442; border:1px solid var(--line); border-radius:14px; padding:10px 10px 10px 16px; box-shadow:0 18px 50px rgba(0,0,0,.5); }
+.ah-bar.on { transform:translate(-50%, 0); }
+.ah-bar p { font-size:14px; line-height:1.35; }
+.ah-bar p span { color:var(--muted); display:block; font-size:12px; }
+.ah-bar .ah-btn { padding:10px 14px; font-size:14px; flex:none; }
+.ah-bar .ah-x { position:static; font-size:18px; padding:0 4px; }
+
+@keyframes ahFade { from { opacity:0; } to { opacity:1; } }
+@media (max-width:560px) {
+  .ah-box { padding:22px 16px 16px; }
+  .ah-row { grid-template-columns:1fr 1fr; }
+  .ah-row > :nth-child(3) { display:none; }
+  .ah-steps { grid-template-columns:1fr; gap:6px; }
+  .ah-step { padding:8px 10px; }
+  .ah-end { padding:14px 16px; }
+  .ah-end .ah-kicker, .ah-end .ah-steps { display:none; }
+  .ah-end h2 { font-size:18px; }
+  .ah-end .ah-actions { margin-top:12px; gap:8px; }
+  .ah-end .ah-btn { padding:11px 14px; font-size:14px; }
+  .ah-proof { grid-template-columns:1fr; }
+  .ah-section { padding:18px 14px; }
+}
