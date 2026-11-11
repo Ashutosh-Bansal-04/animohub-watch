@@ -153,6 +153,19 @@
       '<div class="ah-actions">' + bookBtn() + '</div></div></section>';
   }
 
+  // 3a2. The written sequence (sequence-video pages): the emails as copyable text.
+  var sq = cfg.sequence;
+  if (sq && sq.emails && sq.emails.length) {
+    blocks += '<section class="ah-section"><div class="ah-kicker">' + esc(sq.kicker || "Your sequence") + '</div><h2>' + esc(sq.title || "") + '</h2>' +
+      (sq.text ? '<p>' + esc(sq.text) + '</p>' : "") + '<div class="ah-mails">' +
+      sq.emails.map(function (m) {
+        return '<div class="ah-mail"><div class="ah-mail-meta">' + esc(m.label) + '</div>' +
+          (m.subject ? '<div class="ah-mail-subj">' + esc(m.subject) + '</div>' : "") +
+          (m.lines || []).map(function (l) { return '<p>' + esc(l) + '</p>'; }).join("") +
+          (m.why ? '<div class="ah-mail-why"><b>Why it works:</b> ' + esc(m.why) + '</div>' : "") + '</div>';
+      }).join("") + '</div></section>';
+  }
+
   // 3b. The formula.
   var f = cfg.formula;
   if (f && f.parts && f.parts.length) {
