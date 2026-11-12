@@ -8,6 +8,11 @@
  * 5 seconds or the visitor interacts (play, scroll, click, key).
  * Your own views: open any page once with ?me=1 to stop tracking in that
  * browser (?me=0 turns it back on).
+ *
+ * Works on video pages (/v/<slug>/) and document pages (/d/<slug>/, built by
+ * tools/doc_page.py). Every event carries kind=video|doc. On document pages
+ * "pct" is how far down the PDF pages they read, and opening/downloading the
+ * PDF sends a "pdf" event.
  */
 (function () {
   "use strict";
@@ -22,9 +27,10 @@
     if (localStorage.getItem("ahNoTrack") === "1") return;
   } catch (e) { /* storage blocked: keep tracking */ }
 
-  var m = location.pathname.match(/\/v\/([^\/]+)/);
+  var m = location.pathname.match(/\/(v|d)\/([^\/]+)/);
   if (!m) return;
-  var pageId = m[1];
+  var kind = m[1] === "d" ? "doc" : "video";
+  var pageId = (kind === "doc" ? "d-" : "") + m[2];
   var pill = document.querySelector(".pill");
   var company = pill ? pill.textContent.replace(/^\s*Made for\s*/i, "").trim() : "";
   var ua = navigator.userAgent;
@@ -40,7 +46,7 @@
     p.set("id", pageId); p.set("ev", ev);
     p.set("title", document.title.replace(/\s*·\s*Animohub\s*$/, ""));
     p.set("co", company); p.set("url", location.origin + location.pathname);
-    p.set("dev", device);
+    p.set("dev", device); p.set("kind", kind);
     if (extra) for (var k in extra) p.set(k, String(extra[k]));
     try {
       if (navigator.sendBeacon && navigator.sendBeacon(HOOK, p)) return;
@@ -73,6 +79,7 @@
     var d = Math.round(unsentMs / 1000);
     unsentMs -= d * 1000;
     send("open", { d: d, ref: document.referrer || "" });
+    if (kind === "doc") readMilestones();
   }
 
   // Open = 5 visible seconds or any real interaction.
@@ -113,6 +120,42 @@
       }
     });
     video.addEventListener("ended", function () { maxPct = 100; });
+  }
+
+  // Document pages: reading depth by page, PDF opens.
+  var pages = kind === "doc" ? document.querySelectorAll("img.pg") : [];
+  function readMilestones() {
+    if (!opened) return; // bot guard: wait for a real open, then catch up
+    for (var i = 0; i < MILESTONES.length; i++) {
+      var ms = MILESTONES[i];
+      if (maxPct >= ms && !sentMilestones[ms]) {
+        sentMilestones[ms] = true;
+        var d = Math.round((tick(), unsentMs) / 1000);
+        unsentMs -= d * 1000;
+        send("progress", { pct: ms, d: d });
+      }
+    }
+  }
+  if (pages.length && "IntersectionObserver" in window) {
+    var total = pages.length;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        var n = parseInt(en.target.getAttribute("data-n"), 10) || 0;
+        // A page counts as read once 60% of it has been on screen.
+        var pct = Math.round((n / total) * 100);
+        if (pct > maxPct) { maxPct = pct; readMilestones(); }
+        io.unobserve(en.target);
+      });
+    }, { threshold: 0.6 });
+    for (var j = 0; j < pages.length; j++) io.observe(pages[j]);
+  }
+  if (kind === "doc") {
+    document.addEventListener("click", function (e) {
+      var a = e.target.closest ? e.target.closest("a[data-pdf]") : null;
+      if (!a) return;
+      markOpen(); send("pdf", { file: a.getAttribute("data-pdf"), pct: maxPct });
+    });
   }
 
   // Cal.com booking on the page.
